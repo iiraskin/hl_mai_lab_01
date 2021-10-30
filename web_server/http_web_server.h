@@ -107,6 +107,12 @@ protected:
                 .required(false)
                 .repeatable(false)
                 .callback(OptionCallback<HTTPWebServer>(this, &HTTPWebServer::handleInitDB)));
+        options.addOption(
+            Option("fill_table", "ft", "fill in table of persons from specified json-file")
+                .required(false)
+                .repeatable(false)
+                .argument("value")
+                .callback(OptionCallback<HTTPWebServer>(this, &HTTPWebServer::handleFillTable)));
         
     }
 
@@ -114,7 +120,13 @@ protected:
                       [[maybe_unused]] const std::string &value)
     {
         std::cout << "init db" << std::endl;
-        database::Author::init();
+        database::Person::init();
+    }
+    void handleFillTable([[maybe_unused]] const std::string &name,
+                         [[maybe_unused]] const std::string &value)
+    {
+        std::cout << "fill in table file:" << value << std::endl;
+        database::Person::fillFromJSON(value);
     }
     void handleLogin([[maybe_unused]] const std::string &name,
                      [[maybe_unused]] const std::string &value)
@@ -148,8 +160,6 @@ protected:
         std::cout << "host:" << value << std::endl;
         Config::get().host() = value;
     }
-
-
 
     void handleHelp([[maybe_unused]] const std::string &name,
                     [[maybe_unused]] const std::string &value)
